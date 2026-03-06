@@ -31,38 +31,47 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-// Find yt-dlp binary dynamically
+// Find yt-dlp binary dynamically (cross-platform)
 function getYtDlpPath() {
     const { execSync } = require('child_process');
     const fs = require('fs');
-    const broadPath = [
-        '/opt/homebrew/bin',
-        '/usr/local/bin',
-        '/usr/bin',
-        '/bin',
-        path.join(os.homedir(), '.local/bin'),
-        path.join(os.homedir(), 'projects/veo-remover-env/bin'),
-        process.env.PATH,
-    ].filter(Boolean).join(':');
+    const isWin = process.platform === 'win32';
 
+    // Try system lookup first
     try {
-        const result = execSync('which yt-dlp', {
-            env: { ...process.env, PATH: broadPath },
-        }).toString().trim();
+        const cmd = isWin ? 'where yt-dlp' : 'which yt-dlp';
+        const envPath = isWin ? process.env.PATH : [
+            '/opt/homebrew/bin',
+            '/usr/local/bin',
+            '/usr/bin',
+            '/bin',
+            path.join(os.homedir(), '.local/bin'),
+            process.env.PATH,
+        ].filter(Boolean).join(':');
+
+        const result = execSync(cmd, {
+            env: { ...process.env, PATH: envPath },
+            windowsHide: true,
+        }).toString().trim().split('\n')[0].trim();
         if (result) return result;
     } catch (_) { }
 
-    // Filesystem fallbacks
-    const fallbacks = [
+    // Platform-specific fallbacks
+    const fallbacks = isWin ? [
+        path.join(process.env.LOCALAPPDATA || '', 'Programs', 'yt-dlp', 'yt-dlp.exe'),
+        path.join(os.homedir(), 'scoop', 'shims', 'yt-dlp.exe'),
+        path.join(process.env.PROGRAMFILES || '', 'yt-dlp', 'yt-dlp.exe'),
+        'C:\\yt-dlp\\yt-dlp.exe',
+    ] : [
         '/opt/homebrew/bin/yt-dlp',
         '/usr/local/bin/yt-dlp',
         path.join(os.homedir(), '.local/bin/yt-dlp'),
-        path.join(os.homedir(), 'projects/veo-remover-env/bin/yt-dlp'),
     ];
+
     for (const p of fallbacks) {
         try { fs.accessSync(p); return p; } catch (_) { }
     }
-    return 'yt-dlp';
+    return isWin ? 'yt-dlp.exe' : 'yt-dlp';
 }
 
 // Get default download dir
