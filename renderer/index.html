@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YTDown</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="titlebar" id="titlebar">
+        <div class="titlebar-text">YTDown</div>
+    </div>
+
+    <div class="container">
+        <!-- URL Input -->
+        <div class="input-section">
+            <div class="input-wrapper">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <input type="text" id="urlInput" placeholder="Paste YouTube URL here..." spellcheck="false"
+                    autocomplete="off" />
+                <button id="fetchBtn" class="btn-fetch">
+                    <span class="btn-text">Fetch</span>
+                    <div class="btn-spinner" style="display:none"></div>
+                </button>
+            </div>
+            <div id="errorMsg" class="error-msg" style="display:none"></div>
+        </div>
+
+        <!-- Video Info Card -->
+        <div id="videoInfo" class="video-info" style="display:none">
+            <img id="thumbnail" class="thumbnail" src="" alt="thumbnail" />
+            <div class="video-meta">
+                <h2 id="videoTitle" class="video-title"></h2>
+                <div class="video-details">
+                    <span id="videoChannel" class="detail-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"
+                            height="14">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        <span></span>
+                    </span>
+                    <span id="videoDuration" class="detail-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"
+                            height="14">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" />
+                        </svg>
+                        <span></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Format Grid -->
+        <div id="formatSection" class="format-section" style="display:none">
+            <div class="section-header">
+                <h3>Available Formats</h3>
+                <button id="dirBtn" class="btn-dir" title="Change folder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span id="dirLabel">~/Downloads</span>
+                </button>
+            </div>
+            <div id="formatGrid" class="format-grid"></div>
+        </div>
+
+        <!-- Download Progress -->
+        <div id="downloadProgress" class="download-progress" style="display:none">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <div class="progress-dot"></div>
+                    <span id="progressLabel">Downloading...</span>
+                </div>
+                <span id="progressPercent" class="progress-percent">0%</span>
+            </div>
+
+            <!-- Main progress bar -->
+            <div class="progress-bar-track">
+                <div id="progressFill" class="progress-bar-fill"></div>
+            </div>
+
+            <!-- Stats row -->
+            <div class="progress-stats">
+                <span id="progressSpeed" class="stat-item"></span>
+                <span id="progressSize" class="stat-item"></span>
+                <span id="progressEta" class="stat-item"></span>
+            </div>
+        </div>
+
+        <!-- Download Complete -->
+        <div id="downloadComplete" class="download-complete" style="display:none">
+            <div class="complete-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+            </div>
+            <div class="complete-info">
+                <span class="complete-title">Download Complete!</span>
+                <span id="completeFilename" class="complete-filename"></span>
+            </div>
+            <button id="revealBtn" class="btn-reveal">Show in Finder</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
