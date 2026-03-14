@@ -6,22 +6,32 @@
     "author": "benteckxyz",
     "scripts": {
         "start": "electron .",
-        "build": "electron-builder --mac",
-        "pack": "electron-builder --mac --dir"
+        "build": "electron-builder --win",
+        "pack": "electron-builder --win --dir"
     },
     "build": {
         "appId": "com.benteck.ytdown",
         "productName": "YTDown",
-        "mac": {
-            "category": "public.app-category.utilities",
-            "target": "dmg",
-            "icon": null
+        "win": {
+            "target": [
+                { "target": "nsis", "arch": ["x64"] },
+                { "target": "portable", "arch": ["x64"] }
+            ],
+            "icon": "icon.ico"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
         },
         "files": [
             "main.js",
             "preload.js",
             "renderer/**/*",
-            "package.json"
+            "package.json",
+            "icon.ico",
+            "icon.png"
         ],
         "directories": {
             "output": "dist"

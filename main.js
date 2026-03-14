@@ -31,6 +31,20 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
+// Strip playlist/radio params from YouTube URL so yt-dlp treats it as a single video
+function sanitizeYouTubeUrl(url) {
+    try {
+        const u = new URL(url);
+        // Only strip extra params for youtube.com / youtu.be
+        if (u.hostname.includes('youtube.com') || u.hostname.includes('youtu.be')) {
+            ['list', 'start_radio', 'index', 'pp', 'si'].forEach(p => u.searchParams.delete(p));
+        }
+        return u.toString();
+    } catch (_) {
+        return url; // not a valid URL, return as-is
+    }
+}
+
 // Find yt-dlp binary dynamically (cross-platform)
 function getYtDlpPath() {
     const { execSync } = require('child_process');
@@ -81,7 +95,8 @@ ipcMain.handle('get-default-dir', () => DEFAULT_DOWNLOAD_DIR);
 ipcMain.handle('fetch-formats', async (_event, url) => {
     return new Promise((resolve, reject) => {
         const ytdlp = getYtDlpPath();
-        const proc = spawn(ytdlp, ['-J', '--no-warnings', url]);
+        url = sanitizeYouTubeUrl(url);
+        const proc = spawn(ytdlp, ['-J', '--no-playlist', '--no-warnings', url]);
         let stdout = '';
         let stderr = '';
 
@@ -172,6 +187,7 @@ ipcMain.handle('fetch-formats', async (_event, url) => {
 
 // Download video
 ipcMain.handle('download-video', async (event, { url, formatId, outputDir }) => {
+    url = sanitizeYouTubeUrl(url);
     outputDir = outputDir || DEFAULT_DOWNLOAD_DIR;
     return new Promise((resolve, reject) => {
         const ytdlp = getYtDlpPath();
